@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+.env
+.DS_Store
+*.pdf
+*.docx
+docs/
+vector_store/
