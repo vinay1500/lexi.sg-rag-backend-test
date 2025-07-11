@@ -29,18 +29,20 @@ except FileNotFoundError as e:
 
 @app.post("/query")
 async def query(request: QueryRequest):
-    if index is None or model is None:
-        raise HTTPException(status_code=500, detail="Vector store or model not loaded. Please run the document loader first.")
-
     query_text = request.query
 
-    # Step 1: Embed and search
-    top_chunks = search_chunks(query_text, index, metadata, model)
+    try:
+        # Load only when needed
+        index, metadata, model = load_vector_store()
+    except FileNotFoundError as e:
+        raise HTTPException(status_code=500, detail=f"Vector store not found: {str(e)}")
 
-    # Step 2: Generate answer
-    answer, citations = generate_answer(query_text, top_chunks)
-
-    return {
-        "answer": answer,
-        "citations": citations
-    }
+    try:
+        top_chunks = search_chunks(query_text, index, metadata, model)
+        answer, citations = generate_answer(query_text, top_chunks)
+        return {
+            "answer": answer,
+            "citations": citations
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Query failed: {str(e)}")
