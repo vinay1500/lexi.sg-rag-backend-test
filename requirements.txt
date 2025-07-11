@@ -1,6 +1,7 @@
 fastapi
 uvicorn
 sentence-transformers
+numpy<2.0
 faiss-cpu
 python-docx
 PyMuPDF
